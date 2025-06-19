@@ -1,10 +1,11 @@
 const fs = require('fs');
 const path = require('path');
-// Create a write stream for logging (append mode)
+const cors = require('cors');
+
 const logFilePath = path.join(__dirname, '../logs/server.log');
 
 const logRequest = (req) => {
-  const now = new Date().toISOString(); // e.g., 2025-06-10T15:30:00.000Z
+  const now = new Date().toISOString(); 
   const logEntry = `[${now}] ${req.method} ${req.url}\n`;
 
   fs.appendFile(logFilePath, logEntry, (err) => {
@@ -12,6 +13,13 @@ const logRequest = (req) => {
   });
 };
 
+const server_req=cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST'],
+  credentials: true
+});
+
+
 module.exports={
-    logRequest,
+    logRequest,server_req
 }

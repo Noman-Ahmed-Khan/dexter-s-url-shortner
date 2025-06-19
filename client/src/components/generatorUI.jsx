@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Menu, Loader } from "lucide-react";
 import { motion } from "framer-motion";
+import URL_checker from "url-checker-extended";
+// import url from "url";
 
-export default function GeneratorUI() {
+ export default function GeneratorUI() {
   const [inputValue, setInputValue] = useState("");
   const [output, setOutput] = useState("");
+  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   
@@ -15,17 +18,43 @@ export default function GeneratorUI() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  
+    
   const handleGenerate = async () => {
     if (!inputValue.trim()) return;
-    
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setOutput(`Generated text based on: "${inputValue}"`);
-    setIsLoading(false);
+
+    console.log(URL_checker.isUrl(inputValue));
+
+    if (!URL_checker.isUrl(inputValue)) {
+      setIsLoading(true);
+      setOutput(null);
+      setError("INVALID URL"); 
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setError(null);
+      setOutput(null);
+
+      // Simulate API call
+      const response = await fetch("http://localhost:3000/api/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: inputValue }) 
+      });
+      const data = await response.json();
+      setOutput(`http://localhost:3000/api/${data.short_url_id}`);
+      // const my_url=url.parse(inputValue,url);
+      // setOutput(`Short URL: ${my_url}`);
+      // console.log(my_url);
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
   };
-  
+
   return (
     <div className="min-h-[100dvh] w-full bg-gradient-to-br from-indigo-300 via-white to-pink-300 transition-all duration-500">
       {/* Navbar */}
@@ -52,7 +81,7 @@ export default function GeneratorUI() {
         >
           <div className="p-6 shadow-2xl rounded-2xl bg-white space-y-4">
             <h1 className="text-2xl font-bold text-center text-gray-800">
-              Text Generator
+              Paste your long URL here
             </h1>
             
             <div className="space-y-4">
@@ -92,10 +121,14 @@ export default function GeneratorUI() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
               >
+              <h1 className="text-1xl font-bold text-left text-gray-500">
+                Short URL:
+              </h1>
+   
                 {output}
               </motion.div>
             )}
-            
+            {error && <div style={{ color: 'red' }}>{error}</div>}
             {!output && inputValue && !isLoading && (
               <p className="text-sm text-gray-500 text-center">
                 Click generate to create text based on your input

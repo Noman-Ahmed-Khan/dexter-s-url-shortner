@@ -1,5 +1,3 @@
-// All type of schema and models go here
-
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({

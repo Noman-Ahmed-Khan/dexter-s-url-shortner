@@ -3,13 +3,9 @@ const UrlModel = require("../models/url");
 
 const post_new_url = async (req, res) => {
     const url = req.body.url;
-    console.log(url)
-    if (!url) {
-        return res.status(400).json({ status: 'error', message: 'Missing required field: original_url' });
-    }
-
+    if (!url) return res.status(400).json({ status: 'error', message: 'Missing required field: original_url' });
+    
     const short_id = shortid.generate(); 
-
     try {
         const result = await UrlModel.create({
             original_url:url,
@@ -21,6 +17,7 @@ const post_new_url = async (req, res) => {
             short_url_id: short_id,
             data: result,
         });
+
     } catch (err) {
         console.error("Error saving URL:", err);
         res.status(500).json({ status: "error", message: "Failed to save URL" });
@@ -30,10 +27,7 @@ const post_new_url = async (req, res) => {
 const get_short_url = async (req, res) => {
     try {
         const data = await UrlModel.findOne({ short_id: req.params.shortid });
-        console.log(data)
-        if (!data) {
-            return res.status(404).json({ status: 'error', message: 'Short URL not found' });
-        }
+        if (!data) return res.status(404).json({ status: 'error', message: 'Short URL not found' });
 
         data.total_clicks += 1;
         data.timestamp = new Date().toISOString();

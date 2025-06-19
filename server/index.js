@@ -1,6 +1,6 @@
 const express = require('express');
 const connectMongoDB = require('./connections');
-const { logRequest } = require('./middlewares/url');
+const { logRequest,server_req } = require('./middlewares/url');
 const router=require('./routes/url')
 
 const app = express();
@@ -14,14 +14,15 @@ connectMongoDB('mongodb://localhost:27017/url-shortner-database')
     });
 
 
+app.use(server_req);
 app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
+
 app.use((req, res, next)=>{
-    logRequest(req); // Log every request
-    next(); // Call the next middleware or route handler
+    logRequest(req);
+    next();
 });
 
-app.use('/url',router);
+app.use('/api',router);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
