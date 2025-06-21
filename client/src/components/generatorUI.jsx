@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Menu, Loader } from "lucide-react";
+import { Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import URL_checker from "url-checker-extended";
 // import url from "url";
@@ -9,7 +9,7 @@ import URL_checker from "url-checker-extended";
   const [output, setOutput] = useState("");
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [setScrolled] = useState(false);
   
   useEffect(() => {
     const handleScroll = () => {
@@ -56,23 +56,9 @@ import URL_checker from "url-checker-extended";
   };
 
   return (
-    <div className="min-h-[100dvh] w-full bg-gradient-to-br from-indigo-300 via-white to-pink-300 transition-all duration-500">
-      {/* Navbar */}
-      <nav
-        className={`left-0 right-0 fixed top-0 w-full z-50 transition-all duration-300 ${
-          scrolled ? "bg-white shadow-md" : "bg-transparent"
-        } backdrop-blur-lg`}
-      >
-        <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="text-xl font-bold text-indigo-700 hover:scale-105 transition-transform">
-            GenApp
-          </div>
-          <Menu className="w-6 h-6 text-indigo-700 hover:text-indigo-900 transition-colors" />
-        </div>
-      </nav>
-      
+    <div className="min-h-[100dvh] w-full bg-gradient-to-br from-indigo-400 via-white to-pink-400 transition-all duration-500">      
       {/* Main Content */}
-      <div className="flex items-center justify-center min-h-screen p-4 pt-23">
+      <div className="flex items-center justify-center min-h-screen p-4 pt-28">
         <motion.div
           className="w-full max-w-md"
           initial={{ opacity: 0, y: 20 }}
