@@ -2,17 +2,43 @@ import * as React from 'react';
 import "../css/login.css";
 import Spinner from '../components/spinner'; // adjust path as needed
 
+
+
 export default function Login() {
   const [loading, setLoading] = React.useState(false);
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [rememberMe, setRememberMe] = React.useState(false);
+  const [error, setError] = React.useState("");
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) return;
     setLoading(true);
-    // Simulate login delay
-    setTimeout(() => {
-      setLoading(false);
-      alert("Logged in!");
-    }, 2000);
+    
+    try {
+      setIsLoading(true);
+      setError(null);
+      setOutput(null);
+
+      // Simulate API call
+      const response = await fetch("http://localhost:3000/auth/login", {
+        method: "POST",
+        credentials: "include",
+        headers: { 
+          "Content-Type": "application/json",
+          // 'X-CSRF-Token': csrfToken
+         },
+        body: JSON.stringify({ email: email, password: password }) 
+      });
+      if (!response.ok) throw new Error("Login failed. Please check your credentials.");
+
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
   };
+
 
   return (
     <div className="flex w-full h-screen">
@@ -30,16 +56,35 @@ export default function Login() {
           <div className="mt-8">
             <div>
               <label className="text-lg font-medium">Email</label>
-              <input className="w-full border-2 border-gray-100 round-xl p-4 mt-1 bg-transparent" placeholder="Enter your email" />
+              <input 
+                className="w-full border-2 border-gray-100 round-xl p-4 mt-1 bg-transparent" 
+                placeholder="Enter your email" 
+                type="email"
+                value={email}
+                onChange={(e)=> setEmail(e.target.value)}
+                required
+              />
             </div>
             <div>
               <label className="text-lg font-medium">Password</label>
-              <input type="password" className="w-full border-2 border-gray-100 round-xl p-4 mt-1 bg-transparent" placeholder="Enter your password" />
+              <input 
+                className="w-full border-2 border-gray-100 round-xl p-4 mt-1 bg-transparent" 
+                placeholder="Enter your password" 
+                type="password" 
+                value={password}
+                onChange={(e)=> setPassword(e.target.value)}  
+                required          
+              />
             </div>
 
             <div className="mt-8 flex justify-between">
               <div>
-                <input type="checkbox" id='remember' />
+                <input 
+                  type="checkbox" 
+                  id='remember' 
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                />
                 <label htmlFor="remember" className="ml-2 font-medium text-base">Remember Me</label>
               </div>
               <button className="font-medium text-violet-500">Forgot Password</button>
@@ -64,7 +109,8 @@ export default function Login() {
                 Sign Up with Google
               </button>
             </div>
-
+            {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
+            
             <div className="mt-8 flex justify-center items-center">
               <p className="font-medium text-base">Don't have an account?</p>
               <button className="font-medium text-violet-500 font-base ml-2">Sign up</button>
