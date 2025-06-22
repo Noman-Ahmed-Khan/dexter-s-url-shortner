@@ -40,6 +40,7 @@ login=async(req,res)=>{
     }   
     
     const user=await UserModel.findOne({email: email});
+    console.log(user)
     if(!user || !(await bcrypt.compare(password, user.password))){
         return res.status(401).json({ status:'error', message: 'Invalid credentials'})
     }
@@ -50,7 +51,7 @@ login=async(req,res)=>{
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'Lax',
         maxAge: 30 * 24 * 60 * 60 * 1000,
-    }).status(201).json({
+    }).status(200).json({
         status: 'success' 
     });
 };
