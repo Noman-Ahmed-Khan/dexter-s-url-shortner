@@ -1,14 +1,30 @@
 // You can add routes implementations here
 const express = require('express')
-const { get_all_users,get_user_by_id,post_new_user,patch_user_by_id,delete_user_by_id } = require('../controllers/user');
+const protect = require('../middlewares/auth');
+const { get_all_users,
+        get_user_by_id,
+        patch_user_by_id,
+        delete_user_by_id,
+        register,
+        login,
+        logout } = require('../controllers/user');
 
 const router=express.Router();
-// See That we can replace /api/users with / for simplicity  
 
 router.route('/')
     .get(get_all_users)
-    .post(post_new_user);
+    
+router.route('/register').post(register)
+router.route('/login').post(login)
+router.route('/logout').post(logout)
 
+router.route('/protected').post(protect, (req,res)=>{
+    res.json({message: "authentic", user: req.user})
+})
+
+router.get('/protected', protect, (req, res) => {
+  res.json({ message: 'You are authenticated!', user: req.user });
+});
 
 router.route("/:id")
     .get(get_user_by_id)

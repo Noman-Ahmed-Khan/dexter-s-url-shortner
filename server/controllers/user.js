@@ -1,12 +1,11 @@
-const userModel = require("../models/user");
-
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const UserModel = require('../models/user');
+require("dotenv").config();
 
 
 
-const createtoken = (userID) => jwt.sign({ id: userID }, process.env.JWT_SECRET, { expiresIn: '1month' });
+const createtoken = (userID) => jwt.sign({ id: userID }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
 register = async (req, res) => {
     const { first_name,last_name,email,password,gender,job } = req.body;
@@ -15,7 +14,6 @@ register = async (req, res) => {
         return res.status(400).json({ status: "error", message: "Missing required fields" });
     }
 
-    
     const newUser = new UserModel({
         first_name:first_name,
         last_name:last_name,
@@ -23,11 +21,7 @@ register = async (req, res) => {
         password:await bcrypt.hash(password, 10),
         gender:gender,
         job:job
-    }).catch((err) => {
-        console.error("Error saving user:", err);
-        res.status(500).json({ status: "error", message: "Failed to save user" });
-    });
-
+    }) 
     const token = createtoken(newUser._id);
     res.cookie('token', token, {
         httpOnly :true,
@@ -104,7 +98,6 @@ delete_user_by_id = async (req,res)=>{
 module.exports={
     get_all_users,
     get_user_by_id,
-    post_new_user,
     patch_user_by_id,
     delete_user_by_id,
     register,
