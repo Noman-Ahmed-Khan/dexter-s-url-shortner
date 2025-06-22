@@ -3,13 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import "../css/login.css";
 import Spinner from '../components/spinner';
 
-const getCsrfToken = async () => {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/csrf-token`, {
-    credentials: 'include',
-  });
-  const data = await res.json();
-  return data.csrfToken;
-};
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -18,6 +11,14 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate(); // For navigation after login
+  
+  const getCsrfToken = async () => {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/csrf-token`, {
+      credentials: 'include'
+    });
+    const data = await res.json();
+    return data.csrfToken;
+  };
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
@@ -25,17 +26,18 @@ const Login = () => {
       return;
     }
 
+    const csrfToken = await getCsrfToken();
+
     try {
       setLoading(true);
       setError('');
-      const csrfToken = await getCsrfToken();
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/login`, {
         method: "POST",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken
+          "CSRF-Token": csrfToken 
         },
+        credentials: 'include',
         body: JSON.stringify({ email, password, rememberMe }),
       });
 

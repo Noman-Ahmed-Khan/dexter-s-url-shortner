@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import URL_checker from "url-checker-extended";
+import { useNavigate } from "react-router-dom";
 // import url from "url";
 
  export default function GeneratorUI() {
@@ -10,7 +11,8 @@ import URL_checker from "url-checker-extended";
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [setScrolled] = useState(false);
-  
+  const navigate = useNavigate();
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -19,10 +21,16 @@ import URL_checker from "url-checker-extended";
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
     
+  const getCsrfToken = async () => {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/csrf-token`, {
+      credentials: 'include'
+    });
+    const data = await res.json();
+    return data.csrfToken;
+  };
+
   const handleGenerate = async () => {
     if (!inputValue.trim()) return;
-
-    console.log(URL_checker.isUrl(inputValue));
 
     if (!URL_checker.isUrl(inputValue)) {
       setIsLoading(true);
@@ -37,14 +45,21 @@ import URL_checker from "url-checker-extended";
       setError(null);
       setOutput(null);
 
-      // Simulate API call
-      const response = await fetch("http://localhost:3000/api/", {
+      const csrfToken = await getCsrfToken();
+      const response = await fetch("http://localhost:3000/api/url", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {   
+          "Content-Type": "application/json",
+          "CSRF-Token": csrfToken 
+        },
+        credentials: 'include',
         body: JSON.stringify({ url: inputValue }) 
       });
       const data = await response.json();
-      setOutput(`http://localhost:3000/api/${data.short_url_id}`);
+      if(data.status=="error" && data.message=="Unauthorized"){
+        navigate('/login');
+      }
+      setOutput(`http://localhost:3000/api/url/${data.short_url_id}`);
       // const my_url=url.parse(inputValue,url);
       // setOutput(`Short URL: ${my_url}`);
       // console.log(my_url);

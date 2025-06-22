@@ -1,6 +1,6 @@
 // You can add routes implementations here
 const express = require('express')
-const protect = require('../middlewares/auth');
+const {protect} = require('../middlewares/auth');
 const { get_all_users,
         get_user_by_id,
         patch_user_by_id,

@@ -3,12 +3,17 @@ const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const csrf = require('csurf');
-const cors = require('cors');
+
+
 require('dotenv').config();
+
+
 const connectMongoDB = require('./connections');
 const { logRequest,server_req } = require('./middlewares/global');
+
 const urlRouter=require('./routes/url')
-const userRouter=require('./routes/user')
+const userRouter=require('./routes/user');
+const { check_if_logged_in } = require('./middlewares/auth');
 
 const app = express();
 const PORT = 3000;
@@ -36,10 +41,16 @@ app.use((req, res, next)=>{
     next();
 });
 
-app.use('/api/url',urlRouter);
+app.use('/api/url',check_if_logged_in,urlRouter);
 app.use('/api/user',userRouter);
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
-app.get('/csrf-token', (req, res) => {
+app.get('/api/csrf-token', (req, res) => {
+
+    // res.cookie('XSRF-TOKEN', req.csrfToken(), {
+    //    httpOnly: false, // So frontend JavaScript can access it
+    //     sameSite: 'Lax', // Use 'None' + secure if doing cross-site requests
+    //     secure: false,   // Set true if using HTTPS
+    // });
   res.json({ csrfToken: req.csrfToken() });
 });
 

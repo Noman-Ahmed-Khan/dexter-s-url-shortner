@@ -1,6 +1,5 @@
 import GeneratorUI from "../components/generatorUI";
 import PageWrapper from "../components/PageWrapper";
-import { HomeIcon } from "lucide-react";
 
 export default function Home() {
   return (
