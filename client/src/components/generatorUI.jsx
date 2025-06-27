@@ -3,6 +3,7 @@ import { Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import URL_checker from "url-checker-extended";
 import { useNavigate } from "react-router-dom";
+import getCsrfToken from "../functions/func";
 // import url from "url";
 
  export default function GeneratorUI() {
@@ -21,13 +22,6 @@ import { useNavigate } from "react-router-dom";
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
     
-  const getCsrfToken = async () => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/csrf-token`, {
-      credentials: 'include'
-    });
-    const data = await res.json();
-    return data.csrfToken;
-  };
 
   const handleGenerate = async () => {
     if (!inputValue.trim()) return;
@@ -45,6 +39,14 @@ import { useNavigate } from "react-router-dom";
       setError(null);
       setOutput(null);
 
+      // const token = localStorage.getItem('token'); // Save it after login
+      // const res = await fetch(`${import.meta.env.VITE_API_URL}/api/url`, {
+      //   headers: {
+      //     'Authorization': `Bearer ${token}`,
+      //   },
+      // });
+
+
       const csrfToken = await getCsrfToken();
       const response = await fetch("http://localhost:3000/api/url", {
         method: "POST",
@@ -56,7 +58,8 @@ import { useNavigate } from "react-router-dom";
         body: JSON.stringify({ url: inputValue }) 
       });
       const data = await response.json();
-      if(data.status=="error" && data.message=="Unauthorized"){
+      console.log(data)
+      if(data.status==="error"){
         navigate('/login');
       }
       setOutput(`http://localhost:3000/api/url/${data.short_url_id}`);

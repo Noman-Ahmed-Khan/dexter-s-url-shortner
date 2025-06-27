@@ -23,7 +23,16 @@ router.route('/protected').post(protect, (req,res)=>{
 })
 
 router.get('/protected', protect, (req, res) => {
-  res.json({ message: 'You are authenticated!', user: req.user });
+  res.json({ status:"success", message: 'Authenticated!', user: req.user });
+});
+
+router.route('/me').get(protect,(req, res)=>{
+    if(!req.user) return res.status(401).json({status: "error", message: "Unauthorized"});
+    try{
+        res.json({status: "success", user: req.user})
+    } catch(err){
+        res.status(500).json({status: "error", message: "Internal Error"});
+    }
 });
 
 router.route("/:id")

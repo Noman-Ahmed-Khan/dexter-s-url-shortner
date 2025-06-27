@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../css/login.css";
 import Spinner from '../components/spinner';
+import getCsrfToken from "../functions/func";
 
 
 const Login = () => {
@@ -12,13 +13,6 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate(); // For navigation after login
   
-  const getCsrfToken = async () => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/csrf-token`, {
-      credentials: 'include'
-    });
-    const data = await res.json();
-    return data.csrfToken;
-  };
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
@@ -31,6 +25,14 @@ const Login = () => {
     try {
       setLoading(true);
       setError('');
+
+      // const token = localStorage.getItem('token'); // Save it after login
+      // const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/login`, {
+      //   headers: {
+      //     'Authorization': `Bearer ${token}`,
+      //   },
+      // });
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/login`, {
         method: "POST",
         headers: {

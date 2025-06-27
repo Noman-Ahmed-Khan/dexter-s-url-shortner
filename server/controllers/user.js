@@ -5,7 +5,7 @@ require("dotenv").config();
 
 
 
-const createtoken = (userID) => jwt.sign({ id: userID }, process.env.JWT_SECRET, { expiresIn: '1d' });
+const createtoken = (userID,userRole) => jwt.sign({ id: userID,role:userRole  }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
 register = async (req, res) => {
     const { first_name,last_name,email,password,gender,job } = req.body;
@@ -22,7 +22,8 @@ register = async (req, res) => {
         gender:gender,
         job:job
     }) 
-    const token = createtoken(newUser._id);
+    newUser.save();
+    const token = createtoken(newUser._id,newUser.role);
     res.cookie('token', token, {
         httpOnly :true,
         secure: process.env.NODE_ENV === 'production',
@@ -45,11 +46,12 @@ login=async(req,res)=>{
         return res.status(401).json({ status:'error', message: 'Invalid credentials'})
     }
    
-    const token = createtoken(user._id);
+    const token = createtoken(user._id,user.role);
+    // res.json({token});
     res.cookie('token', token,{
         httpOnly :true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Lax',
+        sameSite: 'Strict',
         maxAge: 30 * 24 * 60 * 60 * 1000,
     }).status(200).json({
         status: 'success' 
@@ -58,23 +60,24 @@ login=async(req,res)=>{
 
 
 logout = (req, res) => {
-  res.clearCookie('token').json({ message: 'Logged out' });
+    // not strickly necessary for bearer token auth
+    res.clearCookie('token').json({ message: 'Logged out' });
 };
 
 get_all_users = async (req,res)=>{
-    const allusers = await userModel.find({});
+    const allusers = await UserModel.find({});
     return res.json(allusers)
 }
 
 get_user_by_id = async (req,res)=>{
-    const user = await userModel.findById(req.params.id);
+    const user = await UserModel.findById(req.params.id);
     if(!user) return res.status(400).json({ status: "error", message: "Missing required fields" }); 
     return res.json(user);
 }
 
 patch_user_by_id= async (req,res)=>{
     // edit a user
-    const user = await userModel.findById(req.params.id);
+    const user = await UserModel.findById(req.params.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const updated_data = {
@@ -84,14 +87,15 @@ patch_user_by_id= async (req,res)=>{
         ...(req.body.password && { password: await bcrypt.hash(req.body.password, 10) }),
         ...(req.body.gender && { gender: req.body.gender }),
         ...(req.body.job && { job: req.body.job }),
+        ...(req.body.role && { role: req.body.role }),
     };
 
-    const updated_user=await userModel.findByIdAndUpdate(req.params.id, updated_data, { new: true })
+    const updated_user=await UserModel.findByIdAndUpdate(req.params.id, updated_data, { new: true })
     return res.status(200).json({status: "updated",...updated_user.toJSON()});
 }
 
 delete_user_by_id = async (req,res)=>{
-    const user= await userModel.findByIdAndDelete(req.params.id,{new: true})
+    const user= await UserModel.findByIdAndDelete(req.params.id,{new: true})
     console.log(req.params.id)
     return res.status(200).json({status:"deleted", ...user.toJSON()});
 }

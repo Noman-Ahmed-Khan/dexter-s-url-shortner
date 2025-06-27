@@ -3,8 +3,6 @@ const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const csrf = require('csurf');
-
-
 require('dotenv').config();
 
 
@@ -30,28 +28,29 @@ app.use(server_req);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(helmet());
 app.use(cookieParser());
+app.use(helmet());
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
-const csrfProtection = csrf({ cookie: true });
-app.use(csrfProtection);
+
 
 app.use((req, res, next)=>{
     logRequest(req);
     next();
 });
 
+const csrfProtection = csrf({ cookie: true });
+app.use(csrfProtection);
+
+app.get('/api/csrf-token', (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
+
 app.use('/api/url',check_if_logged_in,urlRouter);
 app.use('/api/user',userRouter);
-app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
-app.get('/api/csrf-token', (req, res) => {
 
-    // res.cookie('XSRF-TOKEN', req.csrfToken(), {
-    //    httpOnly: false, // So frontend JavaScript can access it
-    //     sameSite: 'Lax', // Use 'None' + secure if doing cross-site requests
-    //     secure: false,   // Set true if using HTTPS
-    // });
-  res.json({ csrfToken: req.csrfToken() });
+app.post('/promote/:userId', authorize('admin'), async (req, res) => {
+  await User.findByIdAndUpdate(req.params.userId, { role: 'admin' });
+  res.send('User promoted to admin');
 });
 
 app.listen(PORT, () => {

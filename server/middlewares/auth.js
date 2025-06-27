@@ -7,16 +7,18 @@ protect = (req,res,next) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
+        console.log(decoded);
+        
         next();
     } catch (err){
         res.status(401).json({ status: 'error', message: 'Invalid token'});
     }
 }
 
-const getUserIdFromToken = (token) => {
+const getUserFromToken = (token) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return decoded.id; // 👈 
+    return decoded; 
   } catch (err) {
     console.error('Invalid token:', err.message);
     return null;
@@ -24,13 +26,32 @@ const getUserIdFromToken = (token) => {
 };
 
 check_if_logged_in = (req,res,next) =>{
+    // const authHeader = req.headers['authorization'];
+    // const token = authHeader?.split(' ')[1];  
+
     const token = req.cookies.token;
     if (!token) return res.status(401).json({ status: 'error', message: 'Unauthorized'});
-    const userId= getUserIdFromToken(token);
-    if (!userId) return res.status(401).json({ status: 'error', message: 'Invalid token'});
+    const user= getUserFromToken(token);
+    if (!user) return res.status(401).json({ status: 'error', message: 'Invalid token'});
     
-    req.userId=userId; 
+    req.user=user; 
     next();
+}
+
+
+authorize=(role) => {
+  return (req,res,next)=>{
+    // const authHeader = req.headers['authorization'];
+    // const token = authHeader?.split(' ')[1];  
+
+    const token = req.cookies.token;
+    if(!token) return res.status(401).json({ status: 'error', message: 'Unauthorized'});
+
+    const user=getUserFromToken(token)
+    if(!user || !user.role ) res.status(401).json({ status: 'error', message: 'Unauthorized'});
+    
+    next();
+  }
 }
 
 module.exports={
