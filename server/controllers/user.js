@@ -41,11 +41,10 @@ login=async(req,res)=>{
     }   
     
     const user=await UserModel.findOne({email: email});
-    console.log(user)
+    
     if(!user || !(await bcrypt.compare(password, user.password))){
         return res.status(401).json({ status:'error', message: 'Invalid credentials'})
     }
-   
     const token = createtoken(user._id,user.role);
     // res.json({token});
     res.cookie('token', token,{
@@ -61,7 +60,9 @@ login=async(req,res)=>{
 
 logout = (req, res) => {
     // not strickly necessary for bearer token auth
-    res.clearCookie('token').json({ message: 'Logged out' });
+    res.clearCookie('token');
+    res.clearCookie('csrfToken');
+    res.status(200).json({ message: 'Logged out' });
 };
 
 get_all_users = async (req,res)=>{
@@ -96,7 +97,6 @@ patch_user_by_id= async (req,res)=>{
 
 delete_user_by_id = async (req,res)=>{
     const user= await UserModel.findByIdAndDelete(req.params.id,{new: true})
-    console.log(req.params.id)
     return res.status(200).json({status:"deleted", ...user.toJSON()});
 }
 

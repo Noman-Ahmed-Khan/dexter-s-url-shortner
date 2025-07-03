@@ -3,7 +3,7 @@ import { Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import URL_checker from "url-checker-extended";
 import { useNavigate } from "react-router-dom";
-import getCsrfToken from "../functions/func";
+import {getCsrfToken} from "../utils/func";
 // import url from "url";
 
  export default function GeneratorUI() {
@@ -11,17 +11,9 @@ import getCsrfToken from "../functions/func";
   const [output, setOutput] = useState("");
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [setScrolled] = useState(false);
+  const [scroll,setScrolled] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-    
 
   const handleGenerate = async () => {
     if (!inputValue.trim()) return;
@@ -58,7 +50,6 @@ import getCsrfToken from "../functions/func";
         body: JSON.stringify({ url: inputValue }) 
       });
       const data = await response.json();
-      console.log(data)
       if(data.status==="error"){
         navigate('/login');
       }

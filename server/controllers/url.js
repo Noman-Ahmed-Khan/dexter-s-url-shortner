@@ -26,6 +26,7 @@ const post_new_url = async (req, res) => {
 
 const get_short_url = async (req, res) => {
     try {
+
         const data = await UrlModel.findOne({ short_id: req.params.shortid });
         if (!data) return res.status(404).json({ status: 'error', message: 'Short URL not found' });
 
@@ -33,7 +34,11 @@ const get_short_url = async (req, res) => {
         data.timestamp = new Date().toISOString();
         await data.save(); 
 
-        return res.status(301).redirect(data.original_url);
+        let redirectUrl = data.original_url;
+        if (!/^https?:\/\//i.test(redirectUrl)) {
+            redirectUrl = 'https://' + redirectUrl;
+        }
+        return res.status(301).redirect(redirectUrl);
     } catch (err) {
         console.error("Error during redirection:", err);
         return res.status(500).json({ status: 'error', message: 'Redirection failed' });

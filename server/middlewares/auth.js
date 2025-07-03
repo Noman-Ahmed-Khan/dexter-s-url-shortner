@@ -7,7 +7,6 @@ protect = (req,res,next) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
-        console.log(decoded);
         
         next();
     } catch (err){
@@ -48,7 +47,7 @@ authorize=(role) => {
     if(!token) return res.status(401).json({ status: 'error', message: 'Unauthorized'});
 
     const user=getUserFromToken(token)
-    if(!user || !user.role ) res.status(401).json({ status: 'error', message: 'Unauthorized'});
+    if(!user || !role.includes(user.role)) res.status(401).json({ status: 'error', message: 'Unauthorized'});
     
     next();
   }
@@ -57,4 +56,5 @@ authorize=(role) => {
 module.exports={
     protect,
     check_if_logged_in,
+    authorize,
 }

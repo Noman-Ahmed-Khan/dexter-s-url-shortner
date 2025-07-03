@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../css/login.css";
 import Spinner from '../components/spinner';
-import getCsrfToken from "../functions/func";
+import {getCsrfToken} from "../utils/func";
+import { useAuth } from "../contexts/authcontext";
 
 
 const Login = () => {
@@ -12,7 +13,7 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate(); // For navigation after login
-  
+  const { refetchUser } = useAuth();
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
@@ -51,7 +52,7 @@ const Login = () => {
       // Optional: Extract token or user data if returned
       // const data = await response.json();
       // localStorage.setItem("token", data.token);
-
+      await refetchUser(); // Refresh user data after login
       navigate('/'); // Redirect on successful login
 
     } catch (err) {
@@ -62,7 +63,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex w-full h-screen">
+    <div className="flex w-full h-screen  bg-gradient-to-br from-indigo-300 via-white to-pink-300">
       <div className="w-full flex items-center justify-center lg:w-1/2">
         <div className="bg-white w-[85%] mb-20 px-10 py-20 rounded-3xl border-2 border-gray-200 shadow-md">
           <h1 className="text-5xl font-semibold flex items-center gap-4 text-center">
@@ -140,7 +141,7 @@ const Login = () => {
             <div className="mt-6 text-center">
               <p className="text-base font-medium">
                 Don't have an account?{" "}
-                <button className="text-violet-500 hover:underline" type="button">Sign up</button>
+                <button className="text-violet-500 hover:underline" type="button" onClick={()=>navigate('/register')}>Sign up</button>
               </p>
             </div>
           </form>

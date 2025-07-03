@@ -1,11 +1,3 @@
-// import './css/App.css'
-// import GeneratorUI from "./components/generatorUI";
-
-// function App() {
-//   return <GeneratorUI />;
-// }
-
-// export default App;
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 

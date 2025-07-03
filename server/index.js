@@ -11,7 +11,7 @@ const { logRequest,server_req } = require('./middlewares/global');
 
 const urlRouter=require('./routes/url')
 const userRouter=require('./routes/user');
-const { check_if_logged_in } = require('./middlewares/auth');
+const { check_if_logged_in,authorize } = require('./middlewares/auth');
 
 const app = express();
 const PORT = 3000;
@@ -45,10 +45,10 @@ app.get('/api/csrf-token', (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
 
-app.use('/api/url',check_if_logged_in,urlRouter);
+app.use('/api/url',check_if_logged_in,authorize(['user']),urlRouter);
 app.use('/api/user',userRouter);
 
-app.post('/promote/:userId', authorize('admin'), async (req, res) => {
+app.post('/promote/:userId', authorize(['admin']), async (req, res) => {
   await User.findByIdAndUpdate(req.params.userId, { role: 'admin' });
   res.send('User promoted to admin');
 });
