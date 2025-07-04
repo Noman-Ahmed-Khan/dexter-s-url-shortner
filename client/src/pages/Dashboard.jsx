@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import {getCsrfToken} from '../utils/func' 
 import {
   LineChart,
   Line,
@@ -8,18 +7,22 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  AreaChart,
+  Area,
 } from "recharts";
-import { User, BarChart3, DollarSign, Trash2, UserCheck, RefreshCw, Search } from "lucide-react";
+import { User, BarChart3, DollarSign, Trash2, UserCheck, RefreshCw, Search, Users, TrendingUp, Activity, Shield } from "lucide-react";
+import { getCsrfToken } from "../utils/func";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [userId, setUserId] = useState("");
+  const [pageLoading, setPageLoading] = useState(true);
   const [stats, setStats] = useState({
-    totalUsers: 0,
-    totalAdmins: 0,
-    traffic: 0,
-    clicks: 0,
-    payments: 0,
+    totalUsers: 1247,
+    totalAdmins: 23,
+    traffic: 12845,
+    clicks: 8934,
+    payments: 45680,
   });
   const [chartData, setChartData] = useState([]);
   const [selectedMetric, setSelectedMetric] = useState(null);
@@ -28,32 +31,30 @@ const AdminDashboard = () => {
   const [success, setSuccess] = useState("");
   const [operationLoading, setOperationLoading] = useState({});
 
+  // Simulate page loading
   useEffect(() => {
-    fetchStats();
-    fetchAllUsers();
+    const timer = setTimeout(() => {
+      setPageLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (!pageLoading) {
+      fetchStats();
+      fetchAllUsers();
+    }
+  }, [pageLoading]);
+
   const fetchStats = async () => {
-    // Simulate API call
     const lineData = [
-      {
-        name: "Today",
-        traffic: stats.traffic,
-        clicks: stats.clicks,
-        payments: stats.payments,
-      },
-      {
-        name: "Yesterday",
-        traffic: Math.floor(stats.traffic * 0.8),
-        clicks: Math.floor(stats.clicks * 0.9),
-        payments: Math.floor(stats.payments * 1.1),
-      },
-      {
-        name: "Last Week",
-        traffic: Math.floor(stats.traffic * 0.5),
-        clicks: Math.floor(stats.clicks * 0.6),
-        payments: Math.floor(stats.payments * 0.4),
-      },
+      { name: "Jan", traffic: 12000, clicks: 8500, payments: 42000 },
+      { name: "Feb", traffic: 13200, clicks: 9200, payments: 45000 },
+      { name: "Mar", traffic: 11800, clicks: 8100, payments: 38000 },
+      { name: "Apr", traffic: 14500, clicks: 10200, payments: 52000 },
+      { name: "May", traffic: 13800, clicks: 9800, payments: 48000 },
+      { name: "Jun", traffic: 15200, clicks: 11000, payments: 55000 },
+      { name: "Jul", traffic: stats.traffic, clicks: stats.clicks, payments: stats.payments },
     ];
     setChartData(lineData);
   };
@@ -69,10 +70,10 @@ const AdminDashboard = () => {
     setTimeout(() => {
       setSuccess('');
       setError('');
-    }, 3000);
+    }, 4000);
   };
 
-  const fetchAllUsers = async () => {
+const fetchAllUsers = async () => {
     setLoading(true);
     setError('');
    try {
@@ -101,8 +102,9 @@ const AdminDashboard = () => {
     }
   };
 
-  const fetchUserById = async () => {
-    setOperationLoading(prev => ({ ...prev, [id]: 'fetching' }));
+
+const fetchUserById = async () => {
+    setOperationLoading(prev => ({ ...prev, [userId]: 'fetching' }));
 
     try {
       console.log(userId);
@@ -130,10 +132,9 @@ const AdminDashboard = () => {
     } catch (err) {
       showMessage(`${err.message} \n FAILED TO FETCH ${userId}`,'error');
     } finally {    
-      setOperationLoading(prev => ({ ...prev, [id]: null }));
+      setOperationLoading(prev => ({ ...prev, [userId]: null }));
     }
   };
-
   const deleteUser = async (id) => {
     setOperationLoading(prev => ({ ...prev, [id]: 'deleting' }));
 
@@ -146,7 +147,7 @@ const AdminDashboard = () => {
       const csrfToken = await getCsrfToken();
 
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/${id}`, {
-        method: "GET",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           "CSRF-Token": csrfToken
@@ -158,6 +159,8 @@ const AdminDashboard = () => {
       if (!response.ok) {
         throw new Error(data.message || "Failed");
       }
+      
+      setUsers(prev => prev.filter(user => user._id !== id));
       showMessage(`USER ${id} DELETED SUCCESSFULLY`);
 
     } catch (err) {
@@ -186,10 +189,13 @@ const AdminDashboard = () => {
         credentials: 'include',
       });
       const data = await response.json();
-      console.log(data);
+
       if (!response.ok) {
         throw new Error(data.message || "Failed");
       }
+      setUsers(prev => prev.map(user => 
+        user._id === id ? { ...user, role: 'admin' } : user
+      ));
         showMessage(`USER ${id} PROMOTED SUCCESSFULLY`);
     } catch (err) {
     
@@ -200,8 +206,41 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleMetricClick = (metric) => {
-    setSelectedMetric(metric);
+  const demoteUser = async (id) => {
+    setOperationLoading(prev => ({ ...prev, [id]: "demoting" }));
+    try {
+      if (!id.trim()){
+        setError("User ID is required.");
+        return;
+      }
+      const csrfToken = await getCsrfToken();
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/${id}/demote`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "CSRF-Token": csrfToken
+        },
+        credentials: 'include',
+      });
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || "Failed");
+      }
+      
+      setUsers(prev => prev.map(user => 
+        user._id === id ? { ...user, role: 'user' } : user
+      ));
+
+      showMessage(`USER ${id} DEMOTED SUCCESSFULLY`);
+    } catch (err) {
+    
+      showMessage(`FAILED TO DEMOTE USER ${id}`,'error');
+    
+      } finally {
+        setOperationLoading(prev => ({ ...prev, [id]: null }));
+    }
   };
 
   const formatDate = (dateString) => {
@@ -214,239 +253,309 @@ const AdminDashboard = () => {
     });
   };
 
+  if (pageLoading) {
+    return <PageLoader />;
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-2">
-            Admin Dashboard
-          </h1>
-          <p className="text-gray-600 text-lg">Manage users and monitor analytics</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
+      {/* Animated Background Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000"></div>
+      </div>
 
-        {/* Alert Messages */}
-        {(error || success) && (
-          <div className={`mb-6 p-4 rounded-lg ${
-            success ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'
-          }`}>
-            {success || error}
-          </div>
-        )}
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <InfoCard 
-            icon={<User className="w-6 h-6 text-blue-500" />} 
-            label="Total Users" 
-            value={stats.totalUsers.toLocaleString()} 
-            color="text-blue-800"
-            bgColor="bg-blue-50"
-          />
-          <InfoCard 
-            icon={<User className="w-6 h-6 text-green-500" />} 
-            label="Total Admins" 
-            value={stats.totalAdmins.toLocaleString()} 
-            color="text-green-800"
-            bgColor="bg-green-50"
-          />
-          <InfoCard 
-            icon={<BarChart3 className="w-6 h-6 text-purple-500" />} 
-            label="Total Clicks" 
-            value={stats.clicks.toLocaleString()} 
-            color="text-purple-800"
-            bgColor="bg-purple-50"
-          />
-          <InfoCard 
-            icon={<DollarSign className="w-6 h-6 text-yellow-500" />} 
-            label="Revenue" 
-            value={`$${stats.payments.toLocaleString()}`} 
-            color="text-yellow-800"
-            bgColor="bg-yellow-50"
-          />
-        </div>
-
-        {/* User Management */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-            <User className="w-6 h-6" />
-            User Management
-          </h2>
-          
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <button 
-              onClick={fetchAllUsers} 
-              disabled={loading}
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-              {loading ? 'Loading...' : 'Fetch All Users'}
-            </button>
-            
-            <div className="flex-1 flex gap-2">
-              <input
-                type="text"
-                placeholder="Enter User ID"
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                className="flex-1 border border-gray-300 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-              <button 
-                onClick={fetchUserById} 
-                disabled={loading}
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-              >
-                <Search className="w-4 h-4" />
-                Search
-              </button>
+      <div className="relative z-10 p-4 md:p-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-12 animate-fade-in">
+            <div className="inline-flex items-center gap-3 mb-4">
+              <div className="p-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl shadow-lg">
+                <Shield className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                Admin Dashboard
+              </h1>
             </div>
+            <p className="text-gray-600 text-lg font-medium">Manage users and monitor analytics with ease</p>
           </div>
 
-          {/* Users Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">User ID</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Name</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Email</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Job</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Role</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Created</th>
-                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.length === 0 ? (
-                  <tr>
-                    <td colSpan="7" className="px-4 py-8 text-center text-gray-500">
-                      {loading ? 'Loading users...' : 'No users found. Click "Fetch All Users" to load data.'}
-                    </td>
-                  </tr>
-                ) : (
-                  users.map((user) => (
-                    <tr key={user._id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3 text-sm text-gray-600 border-b font-mono">{user._id}</td>
-                      <td className="px-4 py-3 text-sm text-gray-800 border-b font-medium">
-                        {user.first_name} {user.last_name}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-600 border-b">{user.email}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600 border-b">{user.job}</td>
-                      <td className="px-4 py-3 text-sm border-b">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          user.role === 'admin' 
-                            ? 'bg-purple-100 text-purple-800' 
-                            : 'bg-gray-100 text-gray-800'
-                        }`}>
-                          {user.role}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-600 border-b">
-                        {formatDate(user.createdAt)}
-                      </td>
-                      <td className="px-4 py-3 text-center border-b">
-                        <div className="flex items-center justify-center gap-2">
-                          <button 
-                            onClick={() => promoteUser(user._id)}
-                            disabled={operationLoading[user._id]}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                          >
-                            {operationLoading[user._id] === 'promoting' ? (
-                              <RefreshCw className="w-3 h-3 animate-spin" />
-                            ) : (
-                              <UserCheck className="w-3 h-3" />
-                            )}
-                            {user.role === 'admin' ? 'Demote' : 'Promote'}
-                          </button>
-                          <button 
-                            onClick={() => deleteUser(user._id)}
-                            disabled={operationLoading[user._id]}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                          >
-                            {operationLoading[user._id] === 'deleting' ? (
-                              <RefreshCw className="w-3 h-3 animate-spin" />
-                            ) : (
-                              <Trash2 className="w-3 h-3" />
-                            )}
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Analytics Chart */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-            <BarChart3 className="w-6 h-6" />
-            Website Analytics
-          </h2>
-          <div className="h-96">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                <XAxis dataKey="name" stroke="#6b7280" />
-                <YAxis stroke="#6b7280" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'white', 
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                  }} 
-                />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="traffic" 
-                  stroke="#3b82f6" 
-                  strokeWidth={3} 
-                  dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, stroke: '#3b82f6', strokeWidth: 2 }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="clicks" 
-                  stroke="#10b981" 
-                  strokeWidth={3} 
-                  dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, stroke: '#10b981', strokeWidth: 2 }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="payments" 
-                  stroke="#f59e0b" 
-                  strokeWidth={3} 
-                  dot={{ fill: '#f59e0b', strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, stroke: '#f59e0b', strokeWidth: 2 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-          
-          {selectedMetric && (
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-              <p className="text-lg font-semibold text-blue-800">
-                Showing detailed analytics for: {selectedMetric.toUpperCase()}
-              </p>
+          {/* Alert Messages */}
+          {(error || success) && (
+            <div className={`mb-8 p-4 rounded-xl backdrop-blur-sm border animate-slide-down ${
+              success 
+                ? 'bg-green-50/80 text-green-700 border-green-200 shadow-green-100' 
+                : 'bg-red-50/80 text-red-700 border-red-200 shadow-red-100'
+            } shadow-lg`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-2 h-2 rounded-full ${success ? 'bg-green-400' : 'bg-red-400'} animate-pulse`}></div>
+                {success || error}
+              </div>
             </div>
           )}
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <StatsCard 
+              icon={<Users className="w-6 h-6" />} 
+              label="Total Users" 
+              value={stats.totalUsers.toLocaleString()} 
+              gradient="from-blue-500 to-blue-600"
+              delay="0ms"
+            />
+            <StatsCard 
+              icon={<Shield className="w-6 h-6" />} 
+              label="Total Admins" 
+              value={stats.totalAdmins.toLocaleString()} 
+              gradient="from-purple-500 to-purple-600"
+              delay="100ms"
+            />
+            <StatsCard 
+              icon={<Activity className="w-6 h-6" />} 
+              label="Total Clicks" 
+              value={stats.clicks.toLocaleString()} 
+              gradient="from-indigo-500 to-indigo-600"
+              delay="200ms"
+            />
+            <StatsCard 
+              icon={<TrendingUp className="w-6 h-6" />} 
+              label="Revenue" 
+              value={`$${stats.payments.toLocaleString()}`} 
+              gradient="from-violet-500 to-violet-600"
+              delay="300ms"
+            />
+          </div>
+
+          {/* User Management */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-8 mb-12 animate-fade-in-up">
+            <h2 className="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg">
+                <User className="w-6 h-6 text-white" />
+              </div>
+              User Management
+            </h2>
+            
+            <div className="flex flex-col lg:flex-row gap-4 mb-8">
+              <button 
+                onClick={fetchAllUsers} 
+                disabled={loading}
+                className="flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+              >
+                <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+                {loading ? 'Loading...' : 'Fetch All Users'}
+              </button>
+              
+              <div className="flex-1 flex gap-3">
+                <input
+                  type="text"
+                  placeholder="Enter User ID"
+                  value={userId}
+                  onChange={(e) => setUserId(e.target.value)}
+                  className="flex-1 border-2 border-gray-200 px-4 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white/80 backdrop-blur-sm"
+                />
+                <button 
+                  onClick={fetchUserById} 
+                  disabled={operationLoading[userId]}
+                  className="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+                >
+                  {operationLoading[userId] === 'fetching' ? (
+                    <RefreshCw className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Search className="w-5 h-5" />
+                  )}
+                  Search
+                </button>
+              </div>
+            </div>
+
+            {/* Users Table */}
+            <div className="overflow-x-auto rounded-xl border border-gray-200">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">User ID</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Name</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Email</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Job</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Role</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Created</th>
+                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.length === 0 ? (
+                    <tr>
+                      <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
+                        {loading ? (
+                          <div className="flex flex-col items-center gap-3">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                            <span>Loading users...</span>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center gap-3">
+                            <Users className="w-12 h-12 text-gray-300" />
+                            <span>No users found. Click "Fetch All Users" to load data.</span>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ) : (
+                    users.map((user, index) => (
+                      <tr key={user._id} className="hover:bg-gray-50/80 transition-all duration-200 border-b border-gray-100 animate-fade-in-up" style={{ animationDelay: `${index * 100}ms` }}>
+                        <td className="px-6 py-4 text-sm text-gray-600 font-mono bg-gray-50 rounded-lg mx-2 my-1">{user._id}</td>
+                        <td className="px-6 py-4 text-sm text-gray-800 font-medium">
+                          {user.first_name} {user.last_name}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600">{user.email}</td>
+                        <td className="px-6 py-4 text-sm text-gray-600">{user.job}</td>
+                        <td className="px-6 py-4 text-sm">
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            user.role === 'admin' 
+                              ? 'bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800' 
+                              : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800'
+                          }`}>
+                            {user.role}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600">
+                          {formatDate(user.createdAt)}
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            <button 
+                              onClick={() => user.role === 'admin' ? demoteUser(user._id) : promoteUser(user._id) }
+                              disabled={operationLoading[user._id]}
+                              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+                            >
+                              {operationLoading[user._id] === 'promoting' || operationLoading[user._id] === 'demoting' ? (
+                                <RefreshCw className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <UserCheck className="w-4 h-4" />
+                              )}
+                              {user.role === 'admin' ? 'Demote' : 'Promote'}
+                            </button>
+                            <button 
+                              onClick={() => deleteUser(user._id)}
+                              disabled={operationLoading[user._id]}
+                              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-lg hover:from-red-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+                            >
+                              {operationLoading[user._id] === 'deleting' ? (
+                                <RefreshCw className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="w-4 h-4" />
+                              )}
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Analytics Chart */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-8 animate-fade-in-up">
+            <h2 className="text-2xl font-bold mb-8 text-gray-800 flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
+                <BarChart3 className="w-6 h-6 text-white" />
+              </div>
+              Website Analytics
+            </h2>
+            <div className="h-96">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <defs>
+                    <linearGradient id="colorTraffic" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                    </linearGradient>
+                    <linearGradient id="colorClicks" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
+                    </linearGradient>
+                    <linearGradient id="colorPayments" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="name" stroke="#6b7280" />
+                  <YAxis stroke="#6b7280" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '12px',
+                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+                      backdropFilter: 'blur(10px)'
+                    }} 
+                  />
+                  <Legend />
+                  <Area 
+                    type="monotone" 
+                    dataKey="traffic" 
+                    stroke="#3b82f6" 
+                    strokeWidth={3} 
+                    fill="url(#colorTraffic)"
+                    dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="clicks" 
+                    stroke="#10b981" 
+                    strokeWidth={3} 
+                    fill="url(#colorClicks)"
+                    dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="payments" 
+                    stroke="#8b5cf5" 
+                    strokeWidth={3} 
+                    fill="url(#colorPayments)"
+                    dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 4 }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-const InfoCard = ({ icon, label, value, color, bgColor }) => (
-  <div className={`${bgColor} rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow`}>
-    <div className="flex items-center gap-3">
-      {icon}
+const PageLoader = () => (
+  <div className="fixed inset-0 bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 flex items-center justify-center z-50">
+    <div className="text-center">
+      <div className="relative">
+        <div className="w-20 h-20 border-4 border-purple-200 rounded-full animate-spin"></div>
+        <div className="absolute inset-0 w-20 h-20 border-4 border-transparent border-t-purple-600 rounded-full animate-spin"></div>
+      </div>
+      <div className="mt-6">
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          Loading Dashboard
+        </h2>
+        <p className="text-gray-600 mt-2">Please wait while we prepare your data...</p>
+      </div>
+    </div>
+  </div>
+);
+
+const StatsCard = ({ icon, label, value, gradient, delay }) => (
+  <div 
+    className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-white/50 animate-fade-in-up"
+    style={{ animationDelay: delay }}
+  >
+    <div className="flex items-center gap-4">
+      <div className={`p-4 bg-gradient-to-r ${gradient} rounded-xl shadow-lg`}>
+        {React.cloneElement(icon, { className: "w-6 h-6 text-white" })}
+      </div>
       <div>
-        <p className="text-sm font-medium text-gray-600">{label}</p>
-        <p className={`text-2xl font-bold ${color}`}>{value}</p>
+        <p className="text-sm font-medium text-gray-600 mb-1">{label}</p>
+        <p className="text-2xl font-bold text-gray-800">{value}</p>
       </div>
     </div>
   </div>
@@ -454,3 +563,31 @@ const InfoCard = ({ icon, label, value, color, bgColor }) => (
 
 export default AdminDashboard;
 
+<style jsx>{`
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slide-down {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.8s ease-out;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out;
+  }
+
+  .animate-slide-down {
+    animation: slide-down 0.5s ease-out;
+  }
+`}</style>

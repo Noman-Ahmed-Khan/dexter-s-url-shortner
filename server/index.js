@@ -45,7 +45,7 @@ app.get('/api/csrf-token', (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
 
-app.use('/api/url',check_if_logged_in,authorize(['user']),urlRouter);
+app.use('/api/url',check_if_logged_in,authorize(['user','admin']),urlRouter);
 app.use('/api/user',userRouter);
 
 app.post('/promote/:userId', authorize(['admin']), async (req, res) => {

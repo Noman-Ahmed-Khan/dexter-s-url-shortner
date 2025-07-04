@@ -7,6 +7,7 @@ const { get_all_users,
         patch_user_by_id,
         delete_user_by_id,
         promote_user_by_id,
+        demote_user_by_id,
         register,
         login,
         logout } = require('../controllers/user');
@@ -38,6 +39,7 @@ router.route("/:id")
     .delete(delete_user_by_id);
 
 router.patch("/:id/promote", authorize(['admin']), promote_user_by_id);
+router.patch("/:id/demote", authorize(['admin']), demote_user_by_id);
 
 // router.get('/users', async (req, res) => {
 //     const allusers = await userModel.find({});
