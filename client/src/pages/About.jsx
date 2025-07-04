@@ -14,6 +14,7 @@ import {
   Star,
   TrendingUp
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const About = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -70,7 +71,33 @@ const About = () => {
   ];
 
   return (
+    
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 overflow-hidden">
+      <motion.div
+          className="fixed top-20 left-20 w-72 h-72 bg-gradient-to-br from-indigo-300 to-purple-500 rounded-full opacity-40"
+          animate={{
+            y: [0, -50, 0],
+            x: [0, 10, 0],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div
+          className="fixed bottom-20 right-20 w-96 h-96 bg-gradient-to-br from-purple-200 to-pink-500 rounded-full opacity-40"
+          animate={{
+            y: [0, 40, 0],
+            x: [0, -30, 0],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+      
       {/* Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
