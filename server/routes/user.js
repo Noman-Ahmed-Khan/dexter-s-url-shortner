@@ -1,10 +1,12 @@
 // You can add routes implementations here
 const express = require('express')
+const { authorize } = require('../middlewares/auth');
 const {protect} = require('../middlewares/auth');
 const { get_all_users,
         get_user_by_id,
         patch_user_by_id,
         delete_user_by_id,
+        promote_user_by_id,
         register,
         login,
         logout } = require('../controllers/user');
@@ -18,13 +20,9 @@ router.route('/register').post(register)
 router.route('/login').post(login)
 router.route('/logout').post(logout)
 
-router.route('/protected').post(protect, (req,res)=>{
+router.route('/protected').get(protect, (req,res)=>{
     res.json({message: "authentic", user: req.user})
 })
-
-router.get('/protected', protect, (req, res) => {
-  res.json({ status:"success", message: 'Authenticated!', user: req.user });
-});
 
 router.route('/me').get(protect,(req, res)=>{
     if(!req.user) return res.status(401).json({status: "error", message: "Unauthorized"});
@@ -34,11 +32,12 @@ router.route('/me').get(protect,(req, res)=>{
         res.status(500).json({status: "error", message: "Internal Error"});
     }
 });
-
 router.route("/:id")
     .get(get_user_by_id)
     .patch(patch_user_by_id)
     .delete(delete_user_by_id);
+
+router.patch("/:id/promote", authorize(['admin']), promote_user_by_id);
 
 // router.get('/users', async (req, res) => {
 //     const allusers = await userModel.find({});

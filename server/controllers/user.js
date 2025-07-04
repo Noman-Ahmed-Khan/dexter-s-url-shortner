@@ -66,12 +66,12 @@ logout = (req, res) => {
 };
 
 get_all_users = async (req,res)=>{
-    const allusers = await UserModel.find({});
+    const allusers = await UserModel.find({}).select('-password -__v');
     return res.json(allusers)
 }
 
 get_user_by_id = async (req,res)=>{
-    const user = await UserModel.findById(req.params.id);
+    const user = await UserModel.findById(req.params.id).select('-password -__v');
     if(!user) return res.status(400).json({ status: "error", message: "Missing required fields" }); 
     return res.json(user);
 }
@@ -100,11 +100,22 @@ delete_user_by_id = async (req,res)=>{
     return res.status(200).json({status:"deleted", ...user.toJSON()});
 }
 
+promote_user_by_id = async (req,res)=>{
+    const user = await UserModel.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.role = 'admin';
+    await user.save();
+    
+    return res.status(200).json({status: "success", message: "User promoted to admin", user});
+}
+
 module.exports={
     get_all_users,
     get_user_by_id,
     patch_user_by_id,
     delete_user_by_id,
+    promote_user_by_id,
     register,
     login,
     logout,

@@ -10,7 +10,7 @@ export default function Navbar() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, loading, refetchUser } = useAuth();
+  const { user, loading, refetchUser, clearUser } = useAuth();
 
   const isAdmin = user?.role === "admin";
 
@@ -40,7 +40,7 @@ export default function Navbar() {
       if (!res.ok) throw new Error("Logout failed");
 
       resetCsrfToken();       // clear JS cache
-      await refetchUser();    // refresh auth state
+      clearUser();    // refresh auth state
       navigate("/login");
     } catch (err) {
       console.error(err);

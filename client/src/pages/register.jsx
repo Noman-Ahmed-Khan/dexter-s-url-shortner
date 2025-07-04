@@ -61,7 +61,7 @@ const Register = () => {
 //       // Optional: Extract token or user data if returned
 //       // const data = await response.json();
 //       // localStorage.setItem("token", data.token);
-
+      await refetchUser(); // Refresh user data after login
       navigate('/'); // Redirect on successful registation
 
     } catch (err) {
