@@ -95,7 +95,7 @@ const AdminDashboard = () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "CSRF-Token": csrfToken
+          "X-CSRF-Token": csrfToken
         },
         credentials: 'include',
       });
@@ -124,7 +124,7 @@ const AdminDashboard = () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "CSRF-Token": csrfToken
+          "X-CSRF-Token": csrfToken
         },
         credentials: 'include',
       });
@@ -154,7 +154,7 @@ const AdminDashboard = () => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          "CSRF-Token": csrfToken
+          "X-CSRF-Token": csrfToken
         },
         credentials: 'include',
       });
@@ -183,7 +183,7 @@ const AdminDashboard = () => {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          "CSRF-Token": csrfToken
+          "X-CSRF-Token": csrfToken
         },
         credentials: 'include',
       });
@@ -214,7 +214,7 @@ const AdminDashboard = () => {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          "CSRF-Token": csrfToken
+          "X-CSRF-Token": csrfToken
         },
         credentials: 'include',
       });

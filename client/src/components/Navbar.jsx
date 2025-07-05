@@ -31,8 +31,8 @@ export default function Navbar() {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/logout`, {
         method: "POST",
         headers: {
-          "CSRF-Token": csrfToken,
           "Content-Type": "application/json",
+          "X-CSRF-Token": csrfToken,
         },
         credentials: "include",
       });
@@ -44,6 +44,8 @@ export default function Navbar() {
       navigate("/login");
     } catch (err) {
       // console.error(err);
+
+
     }
   };
 

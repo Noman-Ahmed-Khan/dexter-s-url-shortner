@@ -15,7 +15,7 @@ const { check_if_logged_in, authorize } = require('./middlewares/auth');
 const app = express();
 const PORT = 3000;
 
-connectMongoDB(`${process.env.MONGO_DB_URI}/url-shortner-database`)
+connectMongoDB(`${process.env.MONGODB_URI}`)
     .then(() => {
         console.log('Connected to MongoDB');
     }).catch((err) => {
