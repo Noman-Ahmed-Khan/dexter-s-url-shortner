@@ -1,25 +1,41 @@
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+require("dotenv").config();
 
 const logFilePath = path.join(__dirname, '../logs/server.log');
 
-const logRequest = (req) => {
-  const now = new Date().toISOString(); 
-  const logEntry = `[${now}] ${req.method} ${req.url}\n`;
+// Ensure logs directory exists
+const logsDir = path.join(__dirname, '../logs');
+if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir, { recursive: true });
+}
 
-  fs.appendFile(logFilePath, logEntry, (err) => {
-    if (err) console.error('Error writing to log file:', err);
-  });
+const logRequest = (req) => {
+    const now = new Date().toISOString();
+    const logEntry = `[${now}] ${req.method} ${req.url}\n`;
+    fs.appendFile(logFilePath, logEntry, (err) => {
+        if (err) console.error('Error writing to log file:', err);
+    });
 };
 
-const server_req=cors({
-  origin: 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  credentials: true
-});
+const corsOptions = {
+    // Allow multiple origins or use CLIENT_URL consistently
+    origin: [
+        process.env.CLIENT_URL || 'http://localhost:5173',
+        'http://localhost:3000',
+        'http://localhost:5173'
+    ],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
+    credentials: true,
+    optionsSuccessStatus: 200 // For legacy browser support
+};
 
+const server_req = cors(corsOptions);
 
-module.exports={
-    logRequest,server_req
-}
+module.exports = {
+    logRequest,
+    server_req,
+    corsOptions
+};

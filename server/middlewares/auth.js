@@ -19,7 +19,7 @@ const getUserFromToken = (token) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     return decoded; 
   } catch (err) {
-    console.error('Invalid token:', err.message);
+    // console.error('Invalid token:', err.message);
     return null;
   }
 };
