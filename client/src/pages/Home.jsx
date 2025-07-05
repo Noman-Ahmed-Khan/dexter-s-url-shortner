@@ -1,7 +1,7 @@
 import GeneratorUI from "../components/generatorUI";
 import PageWrapper from "../components/PageWrapper";
 
-export default function Home() {
+const Home=()=>{
   return (
     <PageWrapper>
       <div className="p-0">
@@ -10,3 +10,5 @@ export default function Home() {
     </PageWrapper>
   );
 }
+
+export default Home;

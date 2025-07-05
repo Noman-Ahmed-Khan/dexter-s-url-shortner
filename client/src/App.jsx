@@ -4,9 +4,9 @@ import { AnimatePresence } from "framer-motion";
 import About from "./pages/About";
 import Layout from "./components/Layout";
 import Login from "./pages/Login";
-import Home from "./pages/home";
+import Home from "./pages/Home";
 import Register from "./pages/register";
-import Profile from "./pages/profile";
+// import Profile from "./pages/profile";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -21,7 +21,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<Profile />} />
+          {/* <Route path="/profile" element={<Profile />} /> */}
           <Route
             path="/dashboard"
             element={
