@@ -2,7 +2,7 @@ let csrfTokenCache = null;
 
 export const getCsrfToken = async () => {
   if (csrfTokenCache) return csrfTokenCache;
-
+console.log('Attempting to fetch CSRF token from:', `${import.meta.env.VITE_API_URL}/api/csrf-token`);
   try {
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/csrf-token`, {
       credentials: 'include'

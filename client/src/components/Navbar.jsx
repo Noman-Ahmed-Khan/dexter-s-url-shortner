@@ -43,7 +43,7 @@ export default function Navbar() {
       clearUser();
       navigate("/login");
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     }
   };
 

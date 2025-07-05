@@ -54,7 +54,7 @@ export default function GeneratorUI() {
       setOutput(null);
 
       const csrfToken = await getCsrfToken();
-      const response = await fetch("http://localhost:3000/api/url", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/url`, {
         method: "POST",
         headers: {   
           "Content-Type": "application/json",
@@ -71,7 +71,7 @@ export default function GeneratorUI() {
         return;
       }
 
-      const shortUrl = `http://localhost:3000/api/url/${data.short_url_id}`;
+      const shortUrl = `${import.meta.env.VITE_API_URL}/api/url/${data.short_url_id}`;
       setOutput(shortUrl);
       
       // Add to history
@@ -98,7 +98,7 @@ export default function GeneratorUI() {
       setCopiedUrl(url);
       setTimeout(() => setCopiedUrl(null), 2000);
     } catch (err) {
-      console.error('Failed to copy: ', err);
+      // console.error('Failed to copy: ', err);
     }
   };
 

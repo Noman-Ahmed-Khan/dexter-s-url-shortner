@@ -48,7 +48,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setPageLoading(false);
-    }, 1500);
+    }, 1000);
     return () => clearTimeout(timer);
   }, []);
 

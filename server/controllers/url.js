@@ -19,7 +19,7 @@ const post_new_url = async (req, res) => {
         });
 
     } catch (err) {
-        console.error("Error saving URL:", err);
+        // console.error("Error saving URL:", err);
         res.status(500).json({ status: "error", message: "Failed to save URL" });
     }
 };
@@ -40,7 +40,7 @@ const get_short_url = async (req, res) => {
         }
         return res.status(301).redirect(redirectUrl);
     } catch (err) {
-        console.error("Error during redirection:", err);
+        // console.error("Error during redirection:", err);
         return res.status(500).json({ status: 'error', message: 'Redirection failed' });
     }
 };

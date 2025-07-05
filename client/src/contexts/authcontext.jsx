@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
       const userValue = await fetchUser();
       setUser(userValue);
     } catch (err) {
-      console.error("Failed to fetch user:", err);
+      // console.error("Failed to fetch user:", err);
       setUser(null);
     } finally {
       setLoading(false);
