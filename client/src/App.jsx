@@ -1,14 +1,14 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
-import About from "./pages/About";
-import Layout from "./components/Layout";
-import Login from "./pages/Login";
-import Home from "./pages/home";
-import Register from "./pages/register";
-import Profile from "./pages/profile";
-import Dashboard from "./pages/Dashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
+import About from "../src/pages/About";
+import Layout from "../src/components/Layout";
+import Login from "../src/pages/Login";
+import Home from "../src/pages/home";
+import Register from "../src/pages/register";
+import Profile from "../src/pages/profile";
+import Dashboard from "../src/pages/Dashboard";
+import ProtectedRoute from "../src/components/ProtectedRoute";
 
 function App() {
   const location = useLocation();
