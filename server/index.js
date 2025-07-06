@@ -2,7 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const csrf = require('csurf');
+// const csrf = require('csurf');
 require('dotenv').config();
 
 const connectMongoDB = require('./connections');
@@ -44,8 +44,8 @@ app.use((req, res, next) => {
 });
 
 // Apply CSRF protection AFTER CORS
-const csrfProtection = csrf({ cookie: true });
-app.use(csrfProtection);
+// const csrfProtection = csrf({ cookie: true });
+// app.use(csrfProtection);
 
 // Now define the CSRF token route
 app.get('/api/csrf-token', (req, res) => {
