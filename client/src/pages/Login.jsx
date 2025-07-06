@@ -121,7 +121,7 @@ const Login = () => {
         credentials: 'include',
         body: JSON.stringify({ email, password, rememberMe }),
       });
-
+  	  console.log(response)
       if (!response.ok) {
         const { message } = await response.json();
         

@@ -44,8 +44,6 @@ export default function Navbar() {
       navigate("/login");
     } catch (err) {
       // console.error(err);
-
-
     }
   };
 
