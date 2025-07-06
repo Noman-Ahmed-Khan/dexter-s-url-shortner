@@ -197,7 +197,7 @@ const Register = () => {
     }
 
     const csrfToken = await getCsrfToken();
-
+    console.log(csrfToken,"in reg")
     try {
       setLoading(true);
       setError('');

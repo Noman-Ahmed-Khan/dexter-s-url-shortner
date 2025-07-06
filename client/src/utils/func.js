@@ -7,12 +7,14 @@ export const getCsrfToken = async () => {
       credentials: 'include'
     });
 
+
     if (!res.ok) {
       throw new Error(`Failed to fetch CSRF token: ${res.status}`);
     }
 
     const data = await res.json();
     csrfTokenCache = data.csrfToken;
+    console.log(csrfTokenCache,"CSRF")
     return csrfTokenCache;
 
   } catch (err) {
