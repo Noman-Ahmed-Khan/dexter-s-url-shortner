@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Shield, CheckCircle } from 'lucide-react';
 import "../css/login.css";
 import Spinner from '../components/spinner';
-// import { getCsrfToken } from "../utils/func";
+import { getCsrfToken } from "../utils/func";
 import { useAuth } from "../contexts/authcontext";
 
 // Memoized InputField component
@@ -106,7 +106,7 @@ const Login = () => {
       return;
     }
 
-    // const csrfToken = await getCsrfToken();
+    const csrfToken = await getCsrfToken();
 
     try {
       setLoading(true);
@@ -116,7 +116,7 @@ const Login = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // "X-CSRF-Token": csrfToken 
+          "X-CSRF-Token": csrfToken 
         },
         credentials: 'include',
         body: JSON.stringify({ email, password, rememberMe }),
