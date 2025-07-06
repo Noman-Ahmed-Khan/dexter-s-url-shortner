@@ -22,6 +22,11 @@ connectMongoDB(`${process.env.MONGODB_URI}`)
         console.error('Error connecting to MongoDB:', err);
     });
 
+app.use(cors({
+    origin: ['https://genapp-one.vercel.app'], // allow your frontend origin
+    credentials: true,                        // allow cookies
+}));
+
 app.get("/",(req,res)=>{
     res.status(200).send("hello");
 });
@@ -52,6 +57,7 @@ app.use((req, res, next) => {
 //     res.json({ csrfToken: req.csrfToken() });
 // });
 // Define other routes
+
 app.use('/api/url', check_if_logged_in, authorize(['user', 'admin']), urlRouter);
 app.use('/api/user', userRouter);
 
