@@ -17,7 +17,7 @@ import {
 } from '@mui/x-charts';
 
 import { User, BarChart3, DollarSign, Trash2, UserCheck, RefreshCw, Search, Users, TrendingUp, Activity, Shield } from "lucide-react";
-import { getCsrfToken } from "../utils/func";
+// import { getCsrfToken } from "../utils/func";
 import { motion } from 'framer-motion';
 
 const AdminDashboard = () => {
@@ -90,12 +90,12 @@ const AdminDashboard = () => {
     setLoading(true);
     setError('');
     try {
-      const csrfToken = await getCsrfToken();
+      // const csrfToken = await getCsrfToken();
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken
+          // "X-CSRF-Token": csrfToken
         },
         credentials: 'include',
       });
@@ -119,12 +119,12 @@ const AdminDashboard = () => {
         setError("User ID is required.");
         return;
       }
-      const csrfToken = await getCsrfToken();
+      // const csrfToken = await getCsrfToken();
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/${userId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken
+          // "X-CSRF-Token": csrfToken
         },
         credentials: 'include',
       });
@@ -149,12 +149,12 @@ const AdminDashboard = () => {
         setError("User ID is required.");
         return;
       }
-      const csrfToken = await getCsrfToken();
+      // const csrfToken = await getCsrfToken();
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken
+          // "X-CSRF-Token": csrfToken
         },
         credentials: 'include',
       });
@@ -178,12 +178,12 @@ const AdminDashboard = () => {
         setError("User ID is required.");
         return;
       }
-      const csrfToken = await getCsrfToken();
+      // const csrfToken = await getCsrfToken();
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/${id}/promote`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken
+          // "X-CSRF-Token": csrfToken
         },
         credentials: 'include',
       });
@@ -209,12 +209,12 @@ const AdminDashboard = () => {
         setError("User ID is required.");
         return;
       }
-      const csrfToken = await getCsrfToken();
+      // const csrfToken = await getCsrfToken();
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/${id}/demote`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken
+          // "X-CSRF-Token": csrfToken
         },
         credentials: 'include',
       });
