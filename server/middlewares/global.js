@@ -22,9 +22,9 @@ const logRequest = (req) => {
 const corsOptions = {
     // Allow multiple origins or use CLIENT_URL consistently
     origin: [
-        process.env.CLIENT_URL || 'http://localhost:5173',
-        'http://localhost:3000',
-        'http://localhost:5173'
+        'https://genapp-one.vercel.app',
+        'http://localhost:5173',
+        'http://localhost:3000'
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
