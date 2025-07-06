@@ -1,28 +1,28 @@
-// let csrfTokenCache = null;
+let csrfTokenCache = null;
 
-// export const getCsrfToken = async () => {
-//   if (csrfTokenCache) return csrfTokenCache;
-//   try {
-//     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/csrf-token`, {
-//       credentials: 'include'
-//     });
+export const getCsrfToken = async () => {
+  if (csrfTokenCache) return csrfTokenCache;
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/csrf-token`, {
+      credentials: 'include'
+    });
 
-//     if (!res.ok) {
-//       throw new Error(`Failed to fetch CSRF token: ${res.status}`);
-//     }
+    if (!res.ok) {
+      throw new Error(`Failed to fetch CSRF token: ${res.status}`);
+    }
 
-//     const data = await res.json();
-//     csrfTokenCache = data.csrfToken;
-//     return csrfTokenCache;
+    const data = await res.json();
+    csrfTokenCache = data.csrfToken;
+    return csrfTokenCache;
 
-//   } catch (err) {
-//     throw err;
-//   }
-// };
+  } catch (err) {
+    throw err;
+  }
+};
 
-// export const resetCsrfToken = () => {
-//   csrfTokenCache = null;
-// };
+export const resetCsrfToken = () => {
+  csrfTokenCache = null;
+};
 
 export const fetchUser = async () => {
   try {
