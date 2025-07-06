@@ -3,7 +3,7 @@ import { Loader, Link, Copy, Check, ChevronDown, ChevronUp, History, ExternalLin
 import { motion, AnimatePresence } from "framer-motion";
 import URL_checker from "url-checker-extended";
 import { useNavigate } from "react-router-dom";
-// import { getCsrfToken } from "../utils/func";
+import { getCsrfToken } from "../utils/func";
 
 export default function GeneratorUI() {
   const [inputValue, setInputValue] = useState("");
@@ -53,12 +53,12 @@ export default function GeneratorUI() {
       setError(null);
       setOutput(null);
 
-      // const csrfToken = await getCsrfToken();
+      const csrfToken = await getCsrfToken();
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/url`, {
         method: "POST",
         headers: {   
           "Content-Type": "application/json",
-          // "X-CSRF-Token": csrfToken 
+          "X-CSRF-Token": csrfToken 
         },
         credentials: 'include',
         body: JSON.stringify({ url: inputValue }) 
