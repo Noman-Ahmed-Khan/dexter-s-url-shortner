@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Menu, X, LogOut, User, Settings, Home, Info, Sparkles } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/authcontext";
-import { getCsrfToken, resetCsrfToken } from "../utils/func";
+// import { getCsrfToken, resetCsrfToken } from "../utils/func";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -26,20 +26,20 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      const csrfToken = await getCsrfToken();
+      // const csrfToken = await getCsrfToken();
 
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken,
+          // "X-CSRF-Token": csrfToken,
         },
         credentials: "include",
       });
 
       if (!res.ok) throw new Error("Logout failed");
 
-      resetCsrfToken();
+      // resetCsrfToken();
       clearUser();
       navigate("/login");
     } catch (err) {
