@@ -23,6 +23,7 @@ const corsOptions = {
     // Allow multiple origins or use CLIENT_URL consistently
     origin: [
         'https://genapp-one.vercel.app',
+        'https://genapp-one-api.vercel.app',
         'http://localhost:5173',
         'http://localhost:3000'
     ],
