@@ -25,7 +25,8 @@ const corsOptions = {
         'https://genapp-one.vercel.app',
         'https://genapp-one-api.vercel.app',
         'http://localhost:5173',
-        'http://localhost:3000'
+        'http://localhost:3000',
+        'https://genapp-one-api.vercel.app/api/user/login'
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
