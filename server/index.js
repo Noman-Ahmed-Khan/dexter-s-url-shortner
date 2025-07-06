@@ -48,9 +48,9 @@ app.use((req, res, next) => {
 // app.use(csrfProtection);
 
 // Now define the CSRF token route
-app.get('/api/csrf-token', (req, res) => {
-    res.json({ csrfToken: req.csrfToken() });
-});
+// app.get('/api/csrf-token', (req, res) => {
+//     res.json({ csrfToken: req.csrfToken() });
+// });
 // Define other routes
 app.use('/api/url', check_if_logged_in, authorize(['user', 'admin']), urlRouter);
 app.use('/api/user',authorize(['user', 'admin']), userRouter);
