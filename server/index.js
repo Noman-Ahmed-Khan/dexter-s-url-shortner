@@ -43,15 +43,15 @@ app.use((req, res, next) => {
     next();
 });
 
-Apply CSRF protection AFTER CORS
+// Apply CSRF protection AFTER CORS
 const csrfProtection = csrf({ cookie: true });
 app.use(csrfProtection);
 
-Now define the CSRF token route
+// Now define the CSRF token route
 app.get('/api/csrf-token', (req, res) => {
     res.json({ csrfToken: req.csrfToken() });
 });
-Define other routes
+// Define other routes
 
 app.use('/api/url', check_if_logged_in, authorize(['user', 'admin']), urlRouter);
 app.use('/api/user', userRouter);
