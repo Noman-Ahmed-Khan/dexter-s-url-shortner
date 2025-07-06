@@ -22,6 +22,11 @@ connectMongoDB(`${process.env.MONGODB_URI}`)
         console.error('Error connecting to MongoDB:', err);
     });
 
+app.get("/",(req,res)=>{
+    res.status(200).send("hello");
+});
+
+
 // Apply CORS first
 app.use(server_req);
 
