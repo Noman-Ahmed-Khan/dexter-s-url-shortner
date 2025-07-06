@@ -53,7 +53,7 @@ app.use((req, res, next) => {
 // });
 // Define other routes
 app.use('/api/url', check_if_logged_in, authorize(['user', 'admin']), urlRouter);
-app.use('/api/user',authorize(['user', 'admin']), userRouter);
+app.use('/api/user', userRouter);
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
