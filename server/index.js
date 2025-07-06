@@ -2,7 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-// const csrf = require('csurf');
+const csrf = require('csurf');
 require('dotenv').config();
 
 const connectMongoDB = require('./connections');
@@ -21,11 +21,6 @@ connectMongoDB(`${process.env.MONGODB_URI}`)
     }).catch((err) => {
         console.error('Error connecting to MongoDB:', err);
     });
-
-app.use(cors({
-    origin: ['https://genapp-one.vercel.app'], // allow your frontend origin
-    credentials: true,                        // allow cookies
-}));
 
 app.get("/",(req,res)=>{
     res.status(200).send("hello");
@@ -48,15 +43,15 @@ app.use((req, res, next) => {
     next();
 });
 
-// Apply CSRF protection AFTER CORS
-// const csrfProtection = csrf({ cookie: true });
-// app.use(csrfProtection);
+Apply CSRF protection AFTER CORS
+const csrfProtection = csrf({ cookie: true });
+app.use(csrfProtection);
 
-// Now define the CSRF token route
-// app.get('/api/csrf-token', (req, res) => {
-//     res.json({ csrfToken: req.csrfToken() });
-// });
-// Define other routes
+Now define the CSRF token route
+app.get('/api/csrf-token', (req, res) => {
+    res.json({ csrfToken: req.csrfToken() });
+});
+Define other routes
 
 app.use('/api/url', check_if_logged_in, authorize(['user', 'admin']), urlRouter);
 app.use('/api/user', userRouter);
