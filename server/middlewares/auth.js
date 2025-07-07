@@ -27,7 +27,7 @@ const getUserFromToken = (token) => {
 check_if_logged_in = (req,res,next) =>{
     // const authHeader = req.headers['authorization'];
     // const token = authHeader?.split(' ')[1];  
-
+    console.log('Token from cookies:', token); // Add this for debugging    
     const token = req.cookies.token;
     if (!token) return res.status(401).json({ status: 'error', message: 'Unauthorized'});
     const user= getUserFromToken(token);
