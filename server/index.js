@@ -28,7 +28,7 @@ app.get("/",(req,res)=>{
 
 
 // Apply CORS FIRST — before everything else!
-app.use("*",server_req);
+app.use(server_req);
 
 // Basic middleware
 app.use(express.json());
@@ -45,7 +45,6 @@ app.use((req, res, next) => {
 
 // Apply CSRF protection AFTER CORS
 // const csrfProtection = csrf({ cookie: true });
-// app.use(csrfProtection);
 const csrfProtection = csrf({
   cookie: {
     secure: process.env.NODE_ENV === 'production', // HTTPS only in production
@@ -53,6 +52,8 @@ const csrfProtection = csrf({
     domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined // Allow all subdomains
   }
 });
+
+app.use(csrfProtection);
 
 // Apply CSRF middleware to all non-GET routes
 // app.use((req, res, next) => {
