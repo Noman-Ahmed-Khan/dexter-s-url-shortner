@@ -14,7 +14,6 @@ export const getCsrfToken = async () => {
 
     const data = await res.json();
     csrfTokenCache = data.csrfToken;
-    console.log(csrfTokenCache,"CSRF")
     return csrfTokenCache;
 
   } catch (err) {
@@ -28,7 +27,6 @@ export const resetCsrfToken = () => {
 export const fetchUser = async () => {
   try {
     const csrfToken = await getCsrfToken();
-    console.log('Fetching user with CSRF token:', csrfToken);
     
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/me`, {
       method: "GET",
@@ -39,22 +37,17 @@ export const fetchUser = async () => {
       credentials: 'include',
     });
 
-    console.log('fetchUser response status:', response.status);
-    console.log('fetchUser response ok:', response.ok);
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('fetchUser error response:', errorText);
       if (response.status === 403) csrfTokenCache = null;
       throw new Error(`User fetch failed: ${errorText}`);
     }
 
     const data = await response.json();
-    console.log('fetchUser data:', data);
     return data.user;
     
   } catch (err) {
-    console.error('fetchUser catch error:', err);
     throw err;
   }
 };

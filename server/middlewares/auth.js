@@ -27,13 +27,12 @@ const getUserFromToken = (token) => {
 check_if_logged_in = (req,res,next) =>{
     // const authHeader = req.headers['authorization'];
     // const token = authHeader?.split(' ')[1];  
-    console.log('Token from cookies:', token); // Add this for debugging    
     const token = req.cookies.token;
     if (!token) return res.status(401).json({ status: 'error', message: 'Unauthorized'});
+    
     const user= getUserFromToken(token);
     if (!user) return res.status(401).json({ status: 'error', message: 'Invalid token'});
     
-    console.log("authentication works fine")
     req.user=user; 
     next();
 }
@@ -46,11 +45,9 @@ authorize=(role) => {
 
     const token = req.cookies.token;
     if(!token) return res.status(401).json({ status: 'error', message: 'Unauthorized'});
-
     const user=getUserFromToken(token)
     if(!user || !role.includes(user.role)) res.status(401).json({ status: 'error', message: 'Unauthorized'});
     
-    console.log("autherization works fine")
     next();
   }
 }
