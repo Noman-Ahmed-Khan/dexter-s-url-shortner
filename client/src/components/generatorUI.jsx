@@ -52,7 +52,7 @@ export default function GeneratorUI() {
       setIsLoading(true);
       setError(null);
       setOutput(null);
-
+      console.log("error happens here before generation")
       const csrfToken = await getCsrfToken();
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/url`, {
         method: "POST",
@@ -65,12 +65,11 @@ export default function GeneratorUI() {
       });
       
       const data = await response.json();
-      
       if (data.status === "error") {
         navigate('/login');
         return;
       }
-
+      console.log(data)
       const shortUrl = `${import.meta.env.VITE_API_URL}/api/url/${data.short_url_id}`;
       setOutput(shortUrl);
       
