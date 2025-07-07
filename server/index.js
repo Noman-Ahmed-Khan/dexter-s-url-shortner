@@ -48,11 +48,13 @@ app.use((req, res, next) => {
 const csrfProtection = csrf({
   cookie: {
     secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Cross-site in production
-    domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined // Allow all subdomains
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    // Remove the domain restriction - it's causing issues
+    httpOnly: true,
+    // Add maxAge for better reliability
+    maxAge: 3600000 // 1 hour
   }
 });
-
 app.use(csrfProtection);
 
 // Apply CSRF middleware to all non-GET routes

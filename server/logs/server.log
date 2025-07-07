@@ -312,3 +312,14 @@
 [2025-07-07T12:48:26.692Z] GET /api/user/me
 [2025-07-07T12:48:34.853Z] POST /api/user/login
 [2025-07-07T12:48:35.154Z] GET /api/user/me
+[2025-07-07T13:01:45.439Z] GET /api/csrf-token
+[2025-07-07T13:01:45.479Z] GET /api/user/me
+[2025-07-07T13:01:50.715Z] GET /api/user/
+[2025-07-07T13:04:32.497Z] GET /api/csrf-token
+[2025-07-07T13:04:32.518Z] GET /api/user/me
+[2025-07-07T13:04:33.675Z] GET /api/user/
+[2025-07-07T13:04:35.392Z] POST /api/user/logout
+[2025-07-07T13:04:46.029Z] GET /api/csrf-token
+[2025-07-07T13:04:46.046Z] POST /api/user/login
+[2025-07-07T13:04:46.311Z] GET /api/user/me
+[2025-07-07T13:04:52.517Z] POST /api/user/logout
