@@ -12,6 +12,7 @@ const post_new_url = async (req, res) => {
             short_id:short_id, 
         });
 
+        console.log(result)
         res.status(201).json({
             status: "success",
             short_url_id: short_id,
@@ -20,6 +21,7 @@ const post_new_url = async (req, res) => {
 
     } catch (err) {
         // console.error("Error saving URL:", err);
+        console.log("ERROR in post url")
         res.status(500).json({ status: "error", message: "Failed to save URL" });
     }
 };

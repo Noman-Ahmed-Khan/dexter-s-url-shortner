@@ -33,6 +33,7 @@ check_if_logged_in = (req,res,next) =>{
     const user= getUserFromToken(token);
     if (!user) return res.status(401).json({ status: 'error', message: 'Invalid token'});
     
+    console.log("authentication works fine")
     req.user=user; 
     next();
 }
@@ -49,6 +50,7 @@ authorize=(role) => {
     const user=getUserFromToken(token)
     if(!user || !role.includes(user.role)) res.status(401).json({ status: 'error', message: 'Unauthorized'});
     
+    console.log("autherization works fine")
     next();
   }
 }
