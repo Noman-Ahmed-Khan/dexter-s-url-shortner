@@ -377,3 +377,7 @@
 [2025-07-07T13:44:14.717Z] GET /api/user/me
 [2025-07-07T13:44:33.249Z] POST /api/user/login
 [2025-07-07T13:44:33.688Z] GET /api/user/me
+[2025-07-07T13:47:21.644Z] POST /api/user/logout
+[2025-07-07T13:47:40.321Z] GET /api/csrf-token
+[2025-07-07T13:47:40.342Z] POST /api/user/login
+[2025-07-07T13:47:40.820Z] GET /api/user/me
