@@ -303,3 +303,6 @@
 [2025-07-07T12:15:26.404Z] GET /api/csrf-token
 [2025-07-07T12:15:26.518Z] GET /api/user/me
 [2025-07-07T12:15:29.498Z] POST /api/user/logout
+[2025-07-07T12:23:29.611Z] GET /api/csrf-token
+[2025-07-07T12:23:29.682Z] POST /api/user/login
+[2025-07-07T12:23:30.060Z] GET /api/user/me

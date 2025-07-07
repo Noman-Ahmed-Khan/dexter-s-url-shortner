@@ -28,7 +28,7 @@ app.get("/",(req,res)=>{
 
 
 // Apply CORS FIRST — before everything else!
-app.use(server_req);
+app.use("*",server_req);
 
 // Basic middleware
 app.use(express.json());
