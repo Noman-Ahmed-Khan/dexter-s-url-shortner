@@ -55,12 +55,12 @@ const csrfProtection = csrf({
 });
 
 // Apply CSRF middleware to all non-GET routes
-app.use((req, res, next) => {
-  if (req.method === 'GET') {
-    return next();
-  }
-  return csrfProtection(req, res, next);
-});
+// app.use((req, res, next) => {
+//   if (req.method === 'GET') {
+//     return next();
+//   }
+//   return csrfProtection(req, res, next);
+// });
 
 // Now define the CSRF token route
 app.get('/api/csrf-token', (req, res) => {
