@@ -207,6 +207,17 @@ export default function Navbar() {
                 </button>
               </div>
             )}
+            {!loading && !user && (
+              <div className="border-t border-slate-200/50 pt-3 mt-3">
+                <button
+                  onClick={() => navigate("/register")}
+                  className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md"
+                >
+                  Create Account
+                </button>
+              </div>
+            )}
+            
           </div>
         </div>
 

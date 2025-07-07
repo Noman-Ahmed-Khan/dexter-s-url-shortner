@@ -421,3 +421,8 @@
 [2025-07-07T16:26:33.771Z] GET /api/user/me
 [2025-07-07T16:26:34.459Z] GET /api/csrf-token
 [2025-07-07T16:26:34.568Z] GET /api/user/me
+[2025-07-07T16:30:42.805Z] POST /api/user/logout
+[2025-07-07T16:32:12.232Z] GET /api/csrf-token
+[2025-07-07T16:32:12.309Z] GET /api/user/me
+[2025-07-07T16:36:05.256Z] GET /api/csrf-token
+[2025-07-07T16:36:05.292Z] GET /api/user/me

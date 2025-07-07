@@ -146,7 +146,7 @@ const Login = () => {
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
           }`}>
             {/* Header */}
-            <div className="text-center">
+            <div className="text-center mt-8">
               <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl mb-6 shadow-lg transform transition-all duration-700 hover:scale-110 hover:rotate-3 ${
                 isVisible ? 'scale-100 rotate-0' : 'scale-0 rotate-45'
               }`}>
@@ -298,7 +298,7 @@ const Login = () => {
             <div className={`text-center transform transition-all duration-700 ${
               formVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
             }`} style={{ transitionDelay: '900ms' }}>
-              <p className="text-slate-600">
+              <p className="text-slate-600 mb-6">
                 Don't have an account?{" "}
                 <button 
                   className="font-semibold text-blue-600 hover:text-blue-700 transition-all duration-200 hover:scale-105"
