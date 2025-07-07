@@ -44,8 +44,23 @@ app.use((req, res, next) => {
 });
 
 // Apply CSRF protection AFTER CORS
-const csrfProtection = csrf({ cookie: true });
-app.use(csrfProtection);
+// const csrfProtection = csrf({ cookie: true });
+// app.use(csrfProtection);
+const csrfProtection = csrf({
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Cross-site in production
+    domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined // Allow all subdomains
+  }
+});
+
+// Apply CSRF middleware to all non-GET routes
+app.use((req, res, next) => {
+  if (req.method === 'GET') {
+    return next();
+  }
+  return csrfProtection(req, res, next);
+});
 
 // Now define the CSRF token route
 app.get('/api/csrf-token', (req, res) => {
