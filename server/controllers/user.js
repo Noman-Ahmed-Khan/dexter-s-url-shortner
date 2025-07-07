@@ -27,8 +27,7 @@ register = async (req, res) => {
     res.cookie('token', token, {
         httpOnly :true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Lax',
-        maxAge: 30 * 24 * 60 * 60 * 1000,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',      maxAge: 30 * 24 * 60 * 60 * 1000,
     }).status(201).json({
         status: 'success'
     });
@@ -50,7 +49,7 @@ login=async(req,res)=>{
     res.cookie('token', token,{
         httpOnly :true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Strict',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 30 * 24 * 60 * 60 * 1000,
     }).status(200).json({
         status: 'success' 

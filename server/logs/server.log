@@ -370,3 +370,10 @@
 [2025-07-07T13:25:45.242Z] GET /api/user/me
 [2025-07-07T13:26:06.819Z] POST /api/user/login
 [2025-07-07T13:26:07.022Z] GET /api/user/me
+[2025-07-07T13:41:39.839Z] GET /api/csrf-token
+[2025-07-07T13:41:39.878Z] GET /api/user/me
+[2025-07-07T13:44:11.201Z] POST /api/user/logout
+[2025-07-07T13:44:14.649Z] GET /api/csrf-token
+[2025-07-07T13:44:14.717Z] GET /api/user/me
+[2025-07-07T13:44:33.249Z] POST /api/user/login
+[2025-07-07T13:44:33.688Z] GET /api/user/me
